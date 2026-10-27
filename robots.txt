@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://amitshabatgoltz-create.github.io/mayo-gaming-shop/sitemap.xml
