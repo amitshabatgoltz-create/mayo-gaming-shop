@@ -97,6 +97,11 @@ Cards are flat: a border, no shadow. On hover a card moves up 3px.
 - **Filter chip** (`.chip`): pill with a `--line-strong` border. The active chip is white (`aria-pressed`).
 - **Product card**: white photo stage (4:3), with an optional tag in the top corner. Below it: category, name, price (900 weight), and an add-to-cart button.
 - **Input** (`.field`): visible label above the field, `--surface-2` background, `--line-strong` border, min height 44px. When invalid the border turns `--error` and an error message appears under the form.
+- **Category tile** (`.cat`): a card with a white photo stage (7:5), the category name and how many products it has. Clicking it filters the shop and jumps there. On phones the tiles become a horizontal scrolling row.
+- **Sort select** (`.sort`): a visible label next to a pill-shaped select, using the input colors.
+- **Step** (`.step`): a numbered white circle, a short heading and one line of text. Three in a row, stacked on phones.
+- **FAQ** (`.faq details`): native `details`/`summary` with a "+" and "−" marker, max width `--content-text`.
+- **Placeholder** (`.todo`): a yellow `--warning` mark for facts the shop hasn't confirmed yet. Remove every one before launch.
 - **Navigation:** a sticky header with the logo, anchor links (hidden on phones) and the cart button with its count.
 - **Cart drawer:** a dialog that slides in from the left, traps focus and closes with Esc. The total and the order form are pinned at the bottom.
 - **Footer:** centered, with links to the privacy policy and the accessibility statement.
