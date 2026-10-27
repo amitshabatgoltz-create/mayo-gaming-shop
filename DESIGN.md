@@ -70,7 +70,7 @@ times 4 gives the pixels.
 - Page gutter: `--space-4` (16px)
 - Content width: `--content` (1120px)
 - Section spacing: `--space-12` (48px) top and bottom. The hero gets `--space-18` / `--space-14`.
-- Card padding: `--space-3`. Box padding: `--space-5`. Product grid gap: `--space-4` (`--space-3` on phones).
+- Card padding: `--space-3`. Box padding: `--space-5`. Product grid gap: `--space-4` (`--space-2` on phones).
 - Anchor jumps leave `--header-offset` (112px) for the sticky header.
 
 ## Shape and depth
