@@ -185,18 +185,17 @@
   .total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; }
   .drawer-foot .btn { width: 100%; }
 
-  /* Modal */
-  .modal {
-    position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
-    z-index: 60; opacity: 0; pointer-events: none; transition: opacity .2s;
+  /* Order form */
+  .order-form { display: flex; flex-direction: column; gap: 8px; }
+  .order-form input {
+    width: 100%; font: inherit; color: var(--text);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 12px;
   }
-  .modal.open { opacity: 1; pointer-events: auto; }
-  .modal-box {
-    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 28px 22px; max-width: 380px; width: 100%; text-align: center;
-  }
-  .modal-box h3 { font-size: 22px; margin-bottom: 8px; }
-  .modal-box p { color: var(--muted); margin-bottom: 20px; }
+  .order-form input:focus { outline: none; border-color: var(--text); }
+  .order-note { color: var(--muted); font-size: 13px; text-align: center; }
+  .wa { background: #25d366; color: #062a14; }
+  .wa:hover { box-shadow: 0 8px 24px rgba(37,211,102,.3); }
 
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translate(-50%, 20px);
@@ -254,7 +253,7 @@
       <a href="#shop" class="btn">לכל המוצרים ←</a>
       <div class="perks">
         <span>🚚 משלוח לכל הארץ</span>
-        <span>🔒 תשלום מאובטח</span>
+        <span>💸 תשלום בביט</span>
         <span>🛡️ אחריות על כל מוצר</span>
       </div>
     </div>
@@ -282,7 +281,7 @@
         <h3>💬 צור קשר</h3>
         <p>שאלה על מוצר? דברו איתנו.</p>
         <div class="socials">
-          <a class="btn" href="https://wa.me/972500000000" target="_blank" rel="noopener">וואטסאפ</a>
+          <a class="btn wa" id="waLink" href="#" target="_blank" rel="noopener">וואטסאפ</a>
           <a class="btn ghost" href="https://www.tiktok.com/@mayo_gaming_shop" target="_blank" rel="noopener">TikTok</a>
           <a class="btn ghost" href="#" target="_blank" rel="noopener">Instagram</a>
         </div>
@@ -304,21 +303,21 @@
   <div class="items" id="items"></div>
   <div class="drawer-foot">
     <div class="total"><span>סה״כ</span><span id="total">0 ₪</span></div>
-    <button class="btn" id="checkout">לתשלום 🔒</button>
+    <form class="order-form" id="orderForm">
+      <input id="custName" name="name" placeholder="שם מלא" autocomplete="name" required>
+      <input id="custAddress" name="address" placeholder="כתובת למשלוח (עיר, רחוב ומספר)" autocomplete="street-address" required>
+      <button class="btn wa" id="checkout" type="submit">שלח הזמנה בוואטסאפ 💬</button>
+    </form>
+    <p class="order-note">ההזמנה נשלחת אלינו לוואטסאפ, ואחרי שנאשר אותה משלמים בביט</p>
   </div>
 </aside>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <h3>זה אתר לדוגמה 😉</h3>
-    <p>באתר האמיתי, כאן הלקוח יעבור לדף תשלום מאובטח באשראי או בביט.</p>
-    <button class="btn" id="closeModal">הבנתי</button>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+  // MAYO's WhatsApp number, international format without "+" (e.g. 972501234567)
+  const WHATSAPP_NUMBER = '972500000000';
+
   const ICONS = {
     keyboard: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="60" height="32" rx="5"/><path d="M11 13h2M19 13h2M27 13h2M35 13h2M43 13h2M51 13h2M11 21h2M19 21h2M27 21h2M35 21h2M43 21h2M51 21h2M18 29h28"/></svg>',
     mouse: '<svg viewBox="0 0 40 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="4" y="2" width="32" height="56" rx="16"/><path d="M20 2v20M4 22h32"/><rect x="17" y="9" width="6" height="8" rx="3" fill="currentColor"/></svg>',
@@ -443,8 +442,29 @@
   $('#cartBtn').onclick = () => openCart(true);
   $('#closeCart').onclick = () => openCart(false);
   $('#overlay').onclick = () => openCart(false);
-  $('#checkout').onclick = () => $('#modal').classList.add('open');
-  $('#closeModal').onclick = () => $('#modal').classList.remove('open');
+  $('#waLink').href = `https://wa.me/${WHATSAPP_NUMBER}`;
+  $('#orderForm').onsubmit = (e) => {
+    e.preventDefault();
+    const entries = Object.entries(cart).filter(([, q]) => q > 0);
+    if (!entries.length) return;
+    let total = 0;
+    const lines = entries.map(([id, q]) => {
+      const p = PRODUCTS.find(p => p.id == id);
+      total += p.price * q;
+      return `• ${p.name} × ${q} = ${fmt(p.price * q)}`;
+    });
+    const msg = [
+      'היי MAYO, אני רוצה להזמין 🎮',
+      '',
+      ...lines,
+      '',
+      `סה״כ: ${fmt(total)}`,
+      '',
+      `שם: ${$('#custName').value.trim()}`,
+      `כתובת: ${$('#custAddress').value.trim()}`
+    ].join('\n');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
 
   renderFilters();
   renderGrid();
